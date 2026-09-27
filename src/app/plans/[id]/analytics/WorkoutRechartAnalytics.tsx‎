@@ -1,0 +1,189 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+} from "recharts";
+import { Workout } from "@/types/workout";
+import { useFitContext } from "@/context/FitContext";
+import { BarChart3, Flame, Clock } from "lucide-react";
+
+interface WorkoutRechartAnalyticsProps {
+  initialWorkouts?: Workout[];
+}
+
+export const WorkoutRechartAnalytics: React.FC<WorkoutRechartAnalyticsProps> = ({
+  initialWorkouts = [],
+}) => {
+  const { myPlans } = useFitContext();
+  const [libraryData, setLibraryData] = useState<Workout[]>(initialWorkouts);
+  const [activeDataset, setActiveDataset] = useState<"plan" | "library">("plan");
+
+  // Fetch API card information if not provided
+  useEffect(() => {
+    if (initialWorkouts.length === 0) {
+      fetch("https://api.abcz.workers.dev/api/fitlog")
+        .then((res) => res.json())
+        .then((data: Workout[]) => setLibraryData(data))
+        .catch((err) => console.error("Failed to load workout card data for recharts:", err));
+    }
+  }, [initialWorkouts]);
+
+  // Use either active plan cards or full library cards
+  const activeWorkouts =
+    activeDataset === "plan" && myPlans.length > 0 ? myPlans : libraryData;
+
+  // Format data for Recharts
+  const chartData = activeWorkouts.map((w) => ({
+    name: w.name.length > 14 ? w.name.slice(0, 12) + "…" : w.name,
+    fullName: w.name,
+    calories: w.caloriesBurned,
+    duration: w.duration,
+    rating: w.rating,
+  }));
+
+  return (
+    <div className="rounded-2xl md:rounded-3xl bg-[#13161F] border border-[#212634] p-5 sm:p-7 space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-[#CCFF00]" />
+            <h3 className="font-heading font-extrabold text-xl text-white tracking-wide uppercase">
+              WORKOUT ANALYTICS &amp; ENERGY METRICS
+            </h3>
+          </div>
+          <p className="text-gray-400 text-xs">
+            Visual comparison of calories burned (kcal) and duration (min) across card lifts.
+          </p>
+        </div>
+
+        {/* Dataset Toggle */}
+        <div className="flex items-center bg-[#181C26] border border-[#232836] p-1 rounded-xl self-start sm:self-auto">
+          <button
+            onClick={() => setActiveDataset("plan")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeDataset === "plan"
+                ? "bg-[#CCFF00] text-black"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Today&apos;s Plan ({myPlans.length})
+          </button>
+          <button
+            onClick={() => setActiveDataset("library")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeDataset === "library"
+                ? "bg-[#CCFF00] text-black"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            All Library Lifts ({libraryData.length})
+          </button>
+        </div>
+      </div>
+
+      {/* Rechart Container */}
+      <div className="w-full h-72 sm:h-80">
+        {chartData.length === 0 ? (
+          <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 text-xs">
+            <span>No workout data to chart yet. Add exercises to view analytics.</span>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={chartData}
+              margin={{ top: 10, right: 10, left: -20, bottom: 25 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#1F2432" vertical={false} />
+              <XAxis
+                dataKey="name"
+                stroke="#6B7280"
+                fontSize={11}
+                tickLine={false}
+                interval={0}
+                angle={-20}
+                textAnchor="end"
+              />
+              <YAxis stroke="#6B7280" fontSize={11} tickLine={false} axisLine={false} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#161922",
+                  borderColor: "#2B3142",
+                  borderRadius: "12px",
+                  color: "#FFFFFF",
+                  fontSize: "12px",
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
+                }}
+                labelStyle={{ fontWeight: "bold", color: "#CCFF00", marginBottom: "4px" }}
+              />
+              <Legend
+                wrapperStyle={{ fontSize: "12px", paddingTop: "12px" }}
+                iconType="circle"
+              />
+              <Bar
+                dataKey="calories"
+                name="Calories (kcal)"
+                fill="#CCFF00"
+                radius={[6, 6, 0, 0]}
+              />
+              <Bar
+                dataKey="duration"
+                name="Duration (min)"
+                fill="#3B82F6"
+                radius={[6, 6, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </div>
+
+      {/* Chart Highlights */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 border-t border-[#1F2432] text-xs">
+        <div className="flex items-center gap-2 text-gray-400">
+          <Flame className="w-4 h-4 text-[#CCFF00]" />
+          <span>
+            Avg Burn:{" "}
+            <strong className="text-white">
+              {chartData.length
+                ? Math.round(
+                    chartData.reduce((a, b) => a + b.calories, 0) / chartData.length
+                  )
+                : 0}{" "}
+              kcal
+            </strong>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 text-gray-400">
+          <Clock className="w-4 h-4 text-blue-400" />
+          <span>
+            Avg Duration:{" "}
+            <strong className="text-white">
+              {chartData.length
+                ? Math.round(
+                    chartData.reduce((a, b) => a + b.duration, 0) / chartData.length
+                  )
+                : 0}{" "}
+              min
+            </strong>
+          </span>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-2 text-gray-400">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#CCFF00]" />
+          <span>Source: Live FitLog API</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default WorkoutRechartAnalytics;
