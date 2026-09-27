@@ -14,6 +14,14 @@ export const PlanMetricsStats = () => {
     0
   );
 
+  const completedExercises = currentList.filter((item) => item.isDone).length;
+  const completedMinutes = currentList
+    .filter((item) => item.isDone)
+    .reduce((sum, item) => sum + (item.duration || 0), 0);
+  const completedCalories = currentList
+    .filter((item) => item.isDone)
+    .reduce((sum, item) => sum + (item.caloriesBurned || 0), 0);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 bg-[#13161F] border border-[#212634] rounded-2xl divide-y sm:divide-y-0 sm:divide-x divide-[#212634] overflow-hidden">
       {/* Exercises Metric */}
@@ -24,6 +32,12 @@ export const PlanMetricsStats = () => {
         <p className="font-heading font-extrabold text-4xl sm:text-5xl text-[#CCFF00] mt-2">
           {totalExercises}
         </p>
+        {activeTab === "today" && totalExercises > 0 && (
+          <p className="text-xs text-gray-400 mt-2 font-medium">
+            <span className="text-[#CCFF00] font-bold">{completedExercises}</span> of{" "}
+            {totalExercises} completed
+          </p>
+        )}
       </div>
 
       {/* Minutes Metric */}
@@ -34,6 +48,12 @@ export const PlanMetricsStats = () => {
         <p className="font-heading font-extrabold text-4xl sm:text-5xl text-white mt-2">
           {totalMinutes}
         </p>
+        {activeTab === "today" && totalExercises > 0 && (
+          <p className="text-xs text-gray-400 mt-2 font-medium">
+            <span className="text-[#38BDF8] font-bold">{completedMinutes}</span> min
+            completed
+          </p>
+        )}
       </div>
 
       {/* Calories Metric */}
@@ -44,6 +64,12 @@ export const PlanMetricsStats = () => {
         <p className="font-heading font-extrabold text-4xl sm:text-5xl text-white mt-2">
           {totalCalories}
         </p>
+        {activeTab === "today" && totalExercises > 0 && (
+          <p className="text-xs text-gray-400 mt-2 font-medium">
+            <span className="text-[#CCFF00] font-bold">{completedCalories}</span> kcal
+            burned
+          </p>
+        )}
       </div>
     </div>
   );
