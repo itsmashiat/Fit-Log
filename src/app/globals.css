@@ -1,26 +1,51 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0B0C0E;
+  --foreground: #FFFFFF;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-brand: #CCFF00;
+  --color-brand-hover: #b8e600;
+  --color-surface: #14171E;
+  --color-surface-hover: #1A1E27;
+  --color-card-border: #222632;
+  --color-dim: #9CA3AF;
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-oswald);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), var(--font-heading), sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0C0E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222632;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #374151;
 }
