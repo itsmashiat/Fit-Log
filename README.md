@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💪 FitLog — Modern Dark Workout Library & Tracker
 
-## Getting Started
+A dark, no-nonsense gym companion built with **Next.js 16**, **TypeScript**, and **Tailwind CSS v4**. Pick a lift, lock it into today's plan, visualize calorie and duration distribution using **Recharts**, and watch your progress add up.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Live Demo & Repository
+- **Live Demo**: [FitLog on Vercel](https://fitlog-test.vercel.app) *(or your deployed URL)*
+- **GitHub Repository**: [https://github.com/itsmashiat/fitlog-test](https://github.com/itsmashiat/fitlog-test)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Technologies Used
+- **Next.js 16 (App Router)**: Fast server and client-side rendering with static site generation (SSG) and incremental caching.
+- **TypeScript**: Strict type definitions for workout models, contexts, and API responses.
+- **Tailwind CSS v4 & DaisyUI**: Modern dark mode styling, custom theme tokens (`#CCFF00` neon lime, `#0B0C0E` pitch black), and responsive layouts.
+- **Recharts**: Interactive visual charts and energy analytics comparing calories and duration across exercises.
+- **Lucide React**: Clean, accessible iconography throughout navigation, stats, and actions.
+- **React Toastify**: Smooth toast notifications for adding, saving, completing, and removing lifts.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ 5 Key Features
 
-To learn more about Next.js, take a look at the following resources:
+### 1. 🏋️ The Library with 3x4 Responsive Grid
+- Dynamically loads 12 comprehensive lifts covering all major muscle groups from the FitLog REST API.
+- Each card displays muscle group badges, workout name, equipment, duration, calories burned, and star rating.
+- Clicking any card navigates to an in-depth two-column details page.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. 📋 Comprehensive Two-Column Workout Details
+- Features a high-resolution illustration and complete workout overview.
+- Structured **Key Specs table** covering equipment, difficulty, sets, reps, duration, calories, and user rating.
+- Step-by-step numbered exercise instructions with interactive **"Add to today's plan"** and **"Save for later"** actions.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. ⏱️ My Plan Management with 5-Lift Cap Guardrails
+- Organizes workouts into two clean tabs: **Today's Plan** and **Saved for Later**.
+- Live badge counters in the top navigation reflect planned and saved counts in real-time.
+- Protects training discipline with a smart 5-lift cap for the current day's routine.
+- Includes **Mark as Done** status toggles and one-click removal with toast notifications.
 
-## Deploy on Vercel
+### 4. 📊 Real-time Metrics Summary & Recharts Analytics
+- Live header statistics automatically sum total **Exercises**, **Minutes**, and **Calories**.
+- Embedded **Recharts** analytics bar chart provides visual side-by-side comparisons of calorie burn and duration between lifts.
+- Switch between active plan analytics and full library benchmarks on demand.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 5. 🔍 Multi-Criteria Sorting, Live Search & LocalStorage Persistence
+- Sort workouts instantaneously by **Duration**, **Calories**, or **Rating**.
+- Live search filtering by workout name, equipment, or target muscle group.
+- Full `localStorage` persistence guarantees your workout routine and saved exercises survive browser reloads.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🔌 API Endpoints
+- **All Workouts**: `https://api.abcz.workers.dev/api/fitlog`
+- **Single Workout**: `https://api.abcz.workers.dev/api/fitlog/:id`
+
+---
+
+## 💻 Getting Started Locally
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/itsmashiat/fitlog-test.git
+   cd fitlog-test
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production**:
+   ```bash
+   npm run build
+   npm start
+   ```
+
+---
+
+## 📄 License
+© 2026 FitLog — Workout Library. Train hard, log honest.
