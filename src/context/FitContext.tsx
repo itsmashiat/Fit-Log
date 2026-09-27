@@ -6,6 +6,7 @@ import React, {
   useState,
   useEffect,
   useMemo,
+  useCallback,
   ReactNode,
 } from "react";
 import { toast } from "react-toastify";
@@ -39,21 +40,25 @@ export const FitProvider = ({ children }: { children: ReactNode }) => {
 
   // Load persisted plans on initial client mount
   useEffect(() => {
-    try {
-      const storedToday = localStorage.getItem("fitlog_today_plans");
-      const storedSaved = localStorage.getItem("fitlog_saved_plans");
+    const timer = setTimeout(() => {
+      try {
+        const storedToday = localStorage.getItem("fitlog_today_plans");
+        const storedSaved = localStorage.getItem("fitlog_saved_plans");
 
-      if (storedToday) {
-        setMyPlans(JSON.parse(storedToday));
+        if (storedToday) {
+          setMyPlans(JSON.parse(storedToday));
+        }
+        if (storedSaved) {
+          setSavedPlans(JSON.parse(storedSaved));
+        }
+      } catch (err) {
+        console.error("Failed to read from localStorage:", err);
+      } finally {
+        setIsLoaded(true);
       }
-      if (storedSaved) {
-        setSavedPlans(JSON.parse(storedSaved));
-      }
-    } catch (err) {
-      console.error("Failed to read from localStorage:", err);
-    } finally {
-      setIsLoaded(true);
-    }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Sync today's plan to localStorage
@@ -143,26 +148,29 @@ export const FitProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Sorted and filtered list helper
-  const sortWorkouts = (list: Workout[]) => {
-    const sorted = [...list].sort((a, b) => {
-      if (sortBy === "Duration") return b.duration - a.duration;
-      if (sortBy === "Calories") return b.caloriesBurned - a.caloriesBurned;
-      if (sortBy === "Rating") return b.rating - a.rating;
-      return 0;
-    });
+  const sortWorkouts = useCallback(
+    (list: Workout[]) => {
+      const sorted = [...list].sort((a, b) => {
+        if (sortBy === "Duration") return b.duration - a.duration;
+        if (sortBy === "Calories") return b.caloriesBurned - a.caloriesBurned;
+        if (sortBy === "Rating") return b.rating - a.rating;
+        return 0;
+      });
 
-    if (!searchQuery.trim()) return sorted;
-    const q = searchQuery.toLowerCase();
-    return sorted.filter(
-      (w) =>
-        w.name.toLowerCase().includes(q) ||
-        w.equipment.toLowerCase().includes(q) ||
-        w.muscleGroups.some((m) => m.toLowerCase().includes(q))
-    );
-  };
+      if (!searchQuery.trim()) return sorted;
+      const q = searchQuery.toLowerCase();
+      return sorted.filter(
+        (w) =>
+          w.name.toLowerCase().includes(q) ||
+          w.equipment.toLowerCase().includes(q) ||
+          w.muscleGroups.some((m) => m.toLowerCase().includes(q))
+      );
+    },
+    [sortBy, searchQuery]
+  );
 
-  const sortedMyPlans = useMemo(() => sortWorkouts(myPlans), [myPlans, sortBy, searchQuery]);
-  const sortedSavedPlans = useMemo(() => sortWorkouts(savedPlans), [savedPlans, sortBy, searchQuery]);
+  const sortedMyPlans = useMemo(() => sortWorkouts(myPlans), [myPlans, sortWorkouts]);
+  const sortedSavedPlans = useMemo(() => sortWorkouts(savedPlans), [savedPlans, sortWorkouts]);
 
   return (
     <FitContext.Provider
